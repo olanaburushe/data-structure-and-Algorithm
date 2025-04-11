@@ -1,0 +1,293 @@
+#include <iostream>2
+using namespace std;
+
+// node class represents each student and stores their information
+class Node {
+	public:
+		string name; // name of the student
+		int id; //ID of the student
+		int age; // Age of student
+		Node *next;  // pointer to the next node in (student)in the linked list
+
+		// constructors to initialize the node with student dat
+
+		Node(string name, int id, int age) {
+			this->name = name;  // set student's name
+			this->id = id;    // set the student's ID
+			this->age = age;  // set student's age
+			next = nullptr;
+		}
+};
+
+// singly linked list class to manage the student list.
+class SinglyLinkedList {
+	private:
+		Node *head; // pointer to the first node in the list (initially null)
+
+	public:
+		//constructor initalizes an empty linked list
+		SinglyLinkedList() {
+			head = nullptr; // list starts with no nodes
+		}
+
+// insertion at the beginnning of the list.
+		void insertAtBeginning(string name, int id, int age) {
+			Node *newNode = new Node(name, id, age); // create a new node with the provided data
+			newNode->next = head;   // set the new node's 'next' pointer to the current head
+			head = newNode; // move the head pointer to the node (it is now the first node)
+			cout << "Student added successfully at the beginning!" << endl; // confirmation message
+		}
+// insertion at the end of the list.
+		void insertAtEnd(string name, int id, int age) {
+			Node *newNode = new Node (name, id, age); // create a new node with the provided data
+			if (head == nullptr) { // if the list is empty, the new node become the head
+				head = newNode;
+				cout << "Student added successfully at the endl!" << endl; // confirmation message
+				return;
+			}
+			Node *temp = head; // start from the head node
+			while (temp->next != nullptr) { // traverse the lis until the last node
+				temp = temp->next;
+			}
+			temp->next = newNode; // set the last node's 'next' pointer to the new node
+			cout << "Student added successfully at the end!" << endl; // confirmation message
+		}
+		// Insertion at a specific position in the list.
+		void insertAtPosition(string name, int id, int age, int position) {
+			if (position < 0) { // Check if the position is valid
+				cout << "Invalid position!" << endl; // Error message
+				return;
+			}
+
+			if (position == 0) { // If position is 0, insert at the beginning
+				insertAtBeginning(name, id, age);
+				return;
+			}
+
+			Node *newNode = new Node(name, id, age); // Create a new node with the provided data
+			Node *temp = head; // Start from the head node
+			int count = 0; // Counter to track the current position
+
+			// Traverse until we find the node just before the desired position
+			while (temp != nullptr && count < position - 1) {
+				temp = temp->next;
+				count++;
+			}
+
+			if (temp == nullptr) { // If the position is out of range
+				cout << "Position out of range!" << endl;
+				return;
+			}
+
+			// Now perform the insertion
+			newNode->next = temp->next;  // Set the new node's next pointer to the current node's next pointer
+			temp->next = newNode;  // Set the current node's next pointer to the new node
+
+			cout << "Student added successfully at position " << position << "!" << endl; // Confirmation message
+		}
+// deletion from the beginning of the list
+		void deleteFromBeginning() {
+
+			if (head == nullptr) { // if the list is empty
+				cout << "list is empty!" << endl; // error message
+				return;
+			}
+			Node *temp = head; // store the current head node
+			head = head->next; // move the head pointer to the next node
+			delete temp; //Delete the old head node
+			cout << "Student deleted successfully from the beginning!" << endl;  // Confirmation message
+		}
+
+
+// Deletion from the end of the list.
+		void deleteFromEnd() {
+
+			if (head == nullptr) {  // If the list is empty
+				cout << "List is empty!" << endl;  // Error message
+				return;
+			}
+
+			if (head->next == nullptr) {  // If there is only one node in the list
+				delete head;  // Delete the only node
+				head = nullptr;  // Set head to null
+				cout << "Student deleted successfully from the end!" << endl;  // Confirmation message
+				return;
+			}
+			Node *temp = head;  // Start from the head node
+
+			while (temp->next && temp->next->next != nullptr) {  // Traverse until the second-to-last node
+				temp = temp->next;
+			}
+			delete temp->next;  // Delete the last node
+			temp->next = nullptr;  // Set the second-to-last node's next pointer to null
+			cout << "Student deleted successfully from the end!" << endl;  // Confirmation message
+		}
+
+// Deletion from a specific position in the list.
+		void deleteFromPosition(int position) {
+
+			if (position < 0 || head == nullptr) {  // Check if the position is valid or the list is empty
+				cout << "Invalid position or List is empty!" << endl;  // Error message
+				return;
+			}
+
+			if (position == 0) {  // If position is 0, delete from the beginning
+				deleteFromBeginning();
+				return;
+			}
+			Node *temp = head;  // Start from the head node
+			int count = 0;  // Counter to track the current position
+
+			while (temp != nullptr && count < position - 1) {  // Traverse until the node just before the desired position
+				temp = temp->next;
+				count++;
+			}
+
+			if (temp == nullptr || temp->next == nullptr) {  // If the position is out of range
+				cout << "Position out of range!" << endl;
+				return;
+			}
+			Node *toDelete = temp->next;  // Store the node to be deleted
+			temp->next = temp->next->next;  // Bypass the node to be deleted
+			delete toDelete;  // Delete the node
+			cout << "Student deleted successfully from position " << position << "!" << endl;  // Confirmation message
+		}
+
+// Display the entire list of students.
+		void display() {
+
+			if (head == nullptr) {  // If the list is empty
+				cout << "List is empty!" << endl;  // Error message
+				return;
+			}
+			Node *temp = head;  // Start from the head node
+			cout << "List of Students:" << endl;  // Title for the display
+
+			while (temp != nullptr) {  // Traverse the list and print each student's data
+				cout << "Name: " << temp->name << ", ID: " << temp->id << ", Age: " << temp->age << endl;
+				temp = temp->next;  // Move to the next node
+			}
+		}
+
+// Search for a student by ID.
+		void search(int id) {
+			Node *temp = head;  // Start from the head node
+
+			while (temp != nullptr) {  // Traverse the list
+
+				if (temp->id == id) {  // If the student with the matching ID is found
+					cout << "Student Found: Name: " << temp->name << ", ID: " << temp->id << ", Age: " << temp->age << endl;
+					return;
+				}
+				temp = temp->next;  // Move to the next node
+			}
+			cout << "Student with ID " << id << " not found!" << endl;  // If no student with the ID is found
+		}
+
+// Destructor to free dynamically allocated memory.
+		~SinglyLinkedList() {
+
+			while (head != nullptr) {  // Traverse the list and delete each node
+				Node *temp = head;
+				head = head->next;
+				delete temp;
+			}
+		}
+};
+
+// Menu function to interact with the user.
+void menu() {
+	SinglyLinkedList list;  // Create an empty linked list
+	int choice, id, age, position;
+	string name;
+
+	while (true) {  // Infinite loop to display the menu repeatedly
+		// Print the menu options for the user
+		cout << "\nMenu:" << endl;
+		cout << "1. Insertion at the beginning" << endl;
+		cout << "2. Insertion at the end" << endl;
+		cout << "3. Insertion at a specific position" << endl;
+		cout << "4. Deletion from the beginning" << endl;
+		cout << "5. Deletion from the end" << endl;
+		cout << "6. Deletion from a specific position" << endl;
+		cout << "7. Display the linked list" << endl;
+		cout << "8. Search for a student by ID" << endl;
+		cout << "9. Exit" << endl;
+
+		cout << "Enter your choice: ";
+		cin >> choice;  // Get the user's choice
+
+		switch (choice) {  // Switch case to perform the selected operation
+			case 1:
+				cout << "Enter student's name: ";
+				cin >> name;  // Get the student's name
+				cout << "Enter student's ID: ";
+				cin >> id;    // Get the student's ID
+				cout << "Enter student's age: ";
+				cin >> age;   // Get the student's age
+				list.insertAtBeginning(name, id, age);  // Call the insertAtBeginning function to add the student at the beginning
+				break;
+
+			case 2:
+				cout << "Enter student's name: ";
+				cin >> name;  // Get the student's name
+				cout << "Enter student's ID: ";
+				cin >> id;    // Get the student's ID
+				cout << "Enter student's age: ";
+				cin >> age;   // Get the student's age
+				list.insertAtEnd(name, id, age);  // Call the insertAtEnd function to add the student at the end
+				break;
+
+			case 3:
+				cout << "Enter student's name: ";
+				cin >> name;  // Get the student's name
+				cout << "Enter student's ID: ";
+				cin >> id;    // Get the student's ID
+				cout << "Enter student's age: ";
+				cin >> age;   // Get the student's age
+				cout << "Enter position to insert at: ";
+				cin >> position;  // Get the position where the student should be inserted
+				list.insertAtPosition(name, id, age,
+				                      position);  // Call the insertAtPosition function to insert the student at the specified position
+				break;
+
+			case 4:
+				list.deleteFromBeginning();  // Call the deleteFromBeginning function to remove the student from the beginning of the list
+				break;
+
+			case 5:
+				list.deleteFromEnd();  // Call the deleteFromEnd function to remove the student from the end of the list
+				break;
+
+			case 6:
+				cout << "Enter position to delete from: ";
+				cin >> position;  // Get the position from where to delete a student
+				list.deleteFromPosition(
+				    position);  // Call the deleteFromPosition function to delete the student from the specified position
+				break;
+
+			case 7:
+				list.display();  // Call the display function to show the list of students
+				break;
+
+			case 8:
+				cout << "Enter student's ID to search: ";
+				cin >> id;    // Get the student's ID to search for
+				list.search(id);  // Call the search function to find the student by ID
+				break;
+
+			case 9:
+				cout << "Exiting..." << endl;  // Message indicating the program will exit
+				return;  // Exit the program
+
+			default:
+				cout << "Invalid choice, please try again!" << endl;  // If the user enters an invalid choice
+		}
+	}
+}
+
+// Main function to run the menu and interact with the user.
+int main() {
+	menu();  // Call the menu function to start the program and show the menu
+	return 0;  // Return 0 to indicate successful program execution
+}

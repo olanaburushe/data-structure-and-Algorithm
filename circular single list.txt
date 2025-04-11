@@ -1,0 +1,289 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Student class to represent a student with name, id, and age
+class Student {
+	public:
+		string name;
+		string student_id;
+		int age;
+
+		Student(string name, string student_id, int age) {
+			this->name = name;
+			this->student_id = student_id;
+			this->age = age;
+		}
+
+		// Display the student information
+		void display() {
+			cout << "Name: " << name << ", ID: " << student_id << ", Age: " << age << endl;
+		}
+};
+
+// Node class for the circular linked list
+class Node {
+	public:
+		Student *student;  // Pointer to the Student object
+		Node *next;        // Pointer to the next node
+
+		Node(Student *student) {
+			this->student = student;
+			this->next = nullptr;
+		}
+};
+
+// Circular Singly Linked List class
+class CircularSinglyLinkedList {
+	private:
+		Node *head;
+
+	public:
+		// Constructor to initialize the list as empty
+		CircularSinglyLinkedList() {
+			head = nullptr;
+		}
+
+		// Check if the list is empty
+		bool is_empty() {
+			return head == nullptr;
+		}
+
+		// Insertion at the beginning
+		void insert_at_beginning(Student *student) {
+			Node *new_node = new Node(student);
+			if (is_empty()) {
+				head = new_node;
+				new_node->next = head;
+			} else {
+				Node *temp = head;
+				while (temp->next != head) {
+					temp = temp->next;
+				}
+				temp->next = new_node;
+				new_node->next = head;
+				head = new_node;
+			}
+			cout << "Successfully inserted at the beginning." << endl;
+		}
+
+		// Insertion at the end
+		void insert_at_end(Student *student) {
+			Node *new_node = new Node(student);
+			if (is_empty()) {
+				head = new_node;
+				new_node->next = head;
+			} else {
+				Node *temp = head;
+				while (temp->next != head) {
+					temp = temp->next;
+				}
+				temp->next = new_node;
+				new_node->next = head;
+			}
+			cout << "Successfully inserted at the end." << endl;
+		}
+
+		// Insertion at a specific position
+		void insert_at_position(Student *student, int position) {
+			if (position <= 0) {
+				cout << "Invalid position!" << endl;
+				return;
+			}
+			Node *new_node = new Node(student);
+			if (position == 1) {
+				insert_at_beginning(student);
+				return;
+			}
+			Node *temp = head;
+			int count = 1;
+			while (count < position - 1 && temp->next != head) {
+				temp = temp->next;
+				count++;
+			}
+			if (temp->next == head) {
+				cout << "Position out of range!" << endl;
+			} else {
+				new_node->next = temp->next;
+				temp->next = new_node;
+				cout << "Successfully inserted at position " << position << "." << endl;
+			}
+		}
+
+		// Deletion from the beginning
+		void delete_from_beginning() {
+			if (is_empty()) {
+				cout << "List is empty!" << endl;
+				return;
+			}
+			if (head->next == head) {
+				delete head;
+				head = nullptr;
+			} else {
+				Node *temp = head;
+				while (temp->next != head) {
+					temp = temp->next;
+				}
+				temp->next = head->next;
+				Node *to_delete = head;
+				head = head->next;
+				delete to_delete;
+			}
+			cout << "Successfully deleted from the beginning." << endl;
+		}
+
+		// Deletion from the end
+		void delete_from_end() {
+			if (is_empty()) {
+				cout << "List is empty!" << endl;
+				return;
+			}
+			if (head->next == head) {
+				delete head;
+				head = nullptr;
+			} else {
+				Node *temp = head;
+				while (temp->next->next != head) {
+					temp = temp->next;
+				}
+				Node *to_delete = temp->next;
+				temp->next = head;
+				delete to_delete;
+			}
+			cout << "Successfully deleted from the end." << endl;
+		}
+
+		// Deletion from a specific position
+		void delete_from_position(int position) {
+			if (is_empty()) {
+				cout << "List is empty!" << endl;
+				return;
+			}
+			if (position <= 0) {
+				cout << "Invalid position!" << endl;
+				return;
+			}
+			if (position == 1) {
+				delete_from_beginning();
+				return;
+			}
+			Node *temp = head;
+			int count = 1;
+			while (count < position - 1 && temp->next != head) {
+				temp = temp->next;
+				count++;
+			}
+			if (temp->next == head) {
+				cout << "Position out of range!" << endl;
+			} else {
+				Node *to_delete = temp->next;
+				temp->next = temp->next->next;
+				delete to_delete;
+				cout << "Successfully deleted from position " << position << "." << endl;
+			}
+		}
+
+		// Display the list
+		void display() {
+			if (is_empty()) {
+				cout << "List is empty!" << endl;
+				return;
+			}
+			Node *temp = head;
+			cout << "Displaying list:" << endl;
+			do {
+				temp->student->display();  // Display student details
+				temp = temp->next;
+			} while (temp != head);
+			cout << "(back to head)" << endl;
+		}
+};
+
+// Main function to interact with the user
+int main() {
+	CircularSinglyLinkedList cll;  // Create an empty Circular Singly Linked List
+
+	while (true) {
+		// Menu-driven interface for user input
+		cout << "\nCircular Singly Linked List Menu:" << endl;
+		cout << "1. Insert at the beginning" << endl;
+		cout << "2. Insert at the end" << endl;
+		cout << "3. Insert at a specific position" << endl;
+		cout << "4. Delete from the beginning" << endl;
+		cout << "5. Delete from the end" << endl;
+		cout << "6. Delete from a specific position" << endl;
+		cout << "7. Display the list" << endl;
+		cout << "8. Exit" << endl;
+
+		int choice;
+		cout << "Enter your choice: ";
+		cin >> choice;
+
+		string name, student_id;
+		int age, position;
+
+		switch (choice) {
+			case 1:
+				cout << "Enter student name: ";
+				cin.ignore();
+				getline(cin, name);
+				cout << "Enter student ID: ";
+				getline(cin, student_id);
+				cout << "Enter student age: ";
+				cin >> age;
+				cll.insert_at_beginning(new Student(name, student_id, age));
+				break;
+
+			case 2:
+				cout << "Enter student name: ";
+				cin.ignore();
+				getline(cin, name);
+				cout << "Enter student ID: ";
+				getline(cin, student_id);
+				cout << "Enter student age: ";
+				cin >> age;
+				cll.insert_at_end(new Student(name, student_id, age));
+				break;
+
+			case 3:
+				cout << "Enter student name: ";
+				cin.ignore();
+				getline(cin, name);
+				cout << "Enter student ID: ";
+				getline(cin, student_id);
+				cout << "Enter student age: ";
+				cin >> age;
+				cout << "Enter position to insert at: ";
+				cin >> position;
+				cll.insert_at_position(new Student(name, student_id, age), position);
+				break;
+
+			case 4:
+				cll.delete_from_beginning();
+				break;
+
+			case 5:
+				cll.delete_from_end();
+				break;
+
+			case 6:
+				cout << "Enter position to delete from: ";
+				cin >> position;
+				cll.delete_from_position(position);
+				break;
+
+			case 7:
+				cll.display();
+				break;
+
+			case 8:
+				cout << "Exiting the program." << endl;
+				return 0;
+
+			default:
+				cout << "Invalid choice! Please try again." << endl;
+		}
+	}
+
+	return 0;
+}

@@ -1,0 +1,257 @@
+
+#include <iostream>
+#include <string>
+using namespace std;
+// student class represents each student in the list
+
+class Student {
+	public:
+		string name;
+		int age;
+		int ID;
+// Constructor to initialize a student
+		Student(string n, int a, int id) {
+			name = n;
+			age = a;
+			ID = id;
+		}
+};
+
+// Node class represents each node in the Circular Doubly Linked List
+class Node {
+	public:
+		Student  *student; // pointer to student object
+		Node *next;// pointerto the next node
+		Node *prev;//pointer to the previous node
+// Constructor to create new node with a student
+		Node (Student *s) {
+			student = s;
+			next = nullptr;
+			prev = nullptr;
+		}
+};
+
+// CircularDoublyListedList class containing all operation
+class CircularDoublyLinkedList {
+	private:
+		Node *head; // Head of the list, initially empty
+	public:
+		// Constructor to in itialize an empty Circulaqr Doubly Linked List
+		CircularDoublyLinkedList() {
+			head = nullptr;
+		}
+// Insertion at the beginning of the list
+		void insert_at_beginning(Student *student) {
+			Node  *new_node = new Node(student);
+
+
+			if (!head) {// if the list is empty, initalize the head to the new node
+				head = new_node;
+				head->next = head;
+				head->prev = head;
+			} else {
+				Node *tail = head->prev; // Get the last node (previous node of head)
+
+				// Update the new node's pointers
+				new_node->next = head;
+				new_node->prev = tail;
+
+				//Update head and tail's pointers to include the new node
+				head->prev = new_node;
+				tail->next = new_node;
+
+				// Set the new node as the head of the list
+				head = new_node;
+			}
+		}
+		// Insertion at the end of the list
+		void insert_at_end(	Student *student) {
+			Node *new_node = new Node(student);
+
+			if (!head) {   // If the list is impty, initialize the head to the new node
+				head = new_node;
+				head->next = head;
+				head->prev = head;
+			} else {
+
+				Node *tail = head->prev; // get the last node (previous node of head)
+
+				// update the new node's pointers	// Update the new node's pointers
+				new_node->next = head;
+				new_node->prev = tail;
+
+				//update head and tail's pointers to include the new node// Update head and tail's pointers to include the new node
+				head->prev = new_node;
+				tail->next = new_node;
+
+			}
+		}
+
+// display the Circular Doubly Linked List
+
+		void display() {
+			if (!head) {
+				cout << "List is empty!\n";
+				return;
+			}
+
+			Node *current = head;
+			cout << "Circular Doubly Linked List: \n";
+
+// traverse the list and print all the nodes
+			do {
+				cout << "Name: " << current->student->name;
+				cout << ",Age: " << current->student->age;
+				cout << ", ID: " << current->student->ID << "\n";
+				current = current->next;
+			} while (current != head);
+			cout << "(head -> " << head->student->name << ")\n";
+		}
+// delete from the beginning of the list
+		void delete_from_beginning() {
+			if (!head) {
+				cout << "List is empty!\n";
+				return;
+			}
+
+			if (head->next == head) { // if there is only one node in the list
+				delete head;
+				head = nullptr;
+			} else {
+				Node *tail = head->prev; // get the last node
+				Node *new_head = head->next;  // move head to the next node
+// update head and tail's pointers
+				tail->next = new_head;
+
+				new_head->prev = tail;
+				delete head;
+				head = new_head;
+			}
+		}
+// delete from the end of the list
+		void delete_from_end() {
+
+			if (!head) {
+				cout << "List is empty!\n";
+				return;
+			}
+			if (head->next == head) { // if there is only one node in the list
+				delete head;
+				head = nullptr;
+
+			} else {
+				Node *tail = head->prev;  // get the last node
+				Node *new_tail = tail->prev;  // get the last tail node
+
+
+				// update the new tail's next pointer and head's previous pointer
+				new_tail->next = head;
+				head->prev = new_tail;
+
+				delete tail;
+			}
+		}
+// delete from a specific position in the list
+		void delete_from_position(int position) {
+			if (position <= 0) {
+				cout << "position must be greater than 0\n";
+				return;
+			}
+			Node *current = head;
+			int count = 1;
+// traverse the list to find the position
+
+			while (current && count < position) {
+				current = current->next;
+				count++;
+			}
+			if (!current) {
+				cout << " position out of range!\n";
+
+			} else if (current->next == head && current->prev == head) { //only one node left
+				delete head;
+				head = nullptr;
+			} else {
+				Node *prev_node = current->prev;
+				Node *next_node = current->next;
+// update the previous and next nodes pointer to remove node
+				prev_node->next = next_node;
+				next_node->prev = prev_node;
+				if (current == head) {
+					head = next_node;
+				}
+				delete current;
+			}
+		}
+};
+
+// function to get user input for a student
+Student *create_student() {
+	string name;
+	int age, id;
+
+	cout << "Enter student's name: ";
+	cin.ignore();
+	getline(cin, name);
+	cout << "Enter student's age:";
+	cin >> age;
+	cout << "Enter student's ID:";
+	cin >> id;
+
+	return new Student(name, age, id);
+}
+
+// menu-driven interface for the user
+void menu() {
+	CircularDoublyLinkedList cll;
+	while (true) {
+		// display the operations menu
+		cout << "\nCircular Doubly Linked List operation for student\n";
+		cout << "1.Insert at the beginning\n";
+		cout << "2.Insert at the end\n";
+		cout << "3. Display the list\n";
+		cout << "4. Delete from the beginning\n";
+		cout << "5. Delete from the the end\n";
+		cout << "6. Delete from a specific position\n";
+		cout << "7. Exit\n";
+		// accept user choice for the operation
+		int choice;
+		cout << "Enter your choice: ";
+		cin >> choice;
+		// Excute the corresponding operation based on user input
+
+		if (choice == 1) {
+			Student *student = create_student();
+			cll.insert_at_beginning(student);
+		} else if (choice == 2) {
+			Student *student = create_student();
+			cll.insert_at_end(student);
+		} else if (choice == 3) {
+			cll.display();
+		} else if (choice == 4) {
+			cll.delete_from_beginning();
+		} else if (choice == 5) {
+			cll.delete_from_end();
+		} else if (choice == 6) {
+			int position;
+			cout << "Enter position to delete from:";
+			cin >> position;
+			cll.delete_from_position(position);
+		} else if (choice == 7) {
+			cout << "Exiting...\n";
+			break;
+		} else {
+			cout << "Invalid choice! please try again.\n";
+		}
+	}
+}
+
+// main entry point of the program
+int main() {
+	menu(); // run the menu for user interaction
+	return 0;
+}
+
+
+
+
